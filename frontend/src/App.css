@@ -1,42 +1,37 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* --- Genel Sayfa Stilleri --- */
+body {
+  /* Desen "Hero Patterns" sitesinden alınmıştır.
+    Renk ve opaklık, içeriğin okunabilirliğini engellemeyecek şekilde ayarlandı.
+  */
+  background-color: #f5f7fa;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4dae3' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 0h20v1H0v20H1V0h19V1H0z'/%3E%3C/g%3E%3C/svg%3E");
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* --- Analiz Sonuç Kutusu Stilleri --- */
+.result-box {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background-color: #ffffff; /* Sonuç kutusunun arkaplanı saf beyaz olacak */
+  border: 1px solid #dee2e6;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-@keyframes logo-spin {
+/* --- Animasyonlar --- */
+@keyframes fadeIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(10px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
