@@ -1,30 +1,29 @@
-/* --- Genel Sayfa Stilleri --- */
 body {
-  /* Desen "Hero Patterns" sitesinden alınmıştır.
-    Renk ve opaklık, içeriğin okunabilirliğini engellemeyecek şekilde ayarlandı.
-  */
-  background-color: #f5f7fa;
+  background-color: #b5b5b5;
   background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4dae3' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 0h20v1H0v20H1V0h19V1H0z'/%3E%3C/g%3E%3C/svg%3E");
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- Analiz Sonuç Kutusu Stilleri --- */
-.result-box {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background-color: #ffffff; /* Sonuç kutusunun arkaplanı saf beyaz olacak */
-  border: 1px solid #dee2e6;
-  text-align: left;
-  width: 100%;
-  box-sizing: border-box;
-  animation: fadeIn 0.5s ease-in-out;
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 18px;
+  margin-bottom: 8px;
+  max-width: 75%;
+  word-wrap: break-word;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-/* --- Animasyonlar --- */
+.user-bubble {
+  background-color: #841216; 
+  color: white;
+  margin-left: auto; 
+}
+
+.bot-bubble {
+  background-color: #9adb8a; /* Messenger grisi */
+  color: black;
+  margin-right: auto; /* Sola hizalama */
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

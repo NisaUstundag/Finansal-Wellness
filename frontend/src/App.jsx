@@ -1,130 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { createTheme, ThemeProvider, CssBaseline, Container, Box, Typography, TextField, Button, Card, CardContent, CircularProgress, Avatar } from '@mui/material';
-import SpaIcon from '@mui/icons-material/Spa'; // Wellness'ı temsil eden bir ikon import ediyoruz
+import { createTheme, ThemeProvider, CssBaseline, Container, Box, Typography, TextField, Button, Card, Paper, CircularProgress, Stack, IconButton } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 import './App.css';
 
-// Renk paletimiz ve arka plan rengi
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#D1242B', // Kurumsal kırmızı
+      main: '#D1242B', 
     },
-  },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: `
-        body {
-          background: linear-gradient(135deg, #f5f7fa 0%, #e1e8f0 100%);
-        }
-      `,
+    secondary: {
+      main: '#006442', 
     },
+    background: {
+      default: '#f5f7fa'
+    }
   },
   typography: {
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif', 
+    h5: {
+      fontWeight: 700,
+    },
+    h6: {
+      fontWeight: 700,
+    }
   },
 });
 
+const MotivationalQuote = () => (
+  <Typography variant="body2" color="text.secondary" sx={{ mb: 4, fontStyle: 'italic' }}>
+    "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest. You can't win until you do this."
+  </Typography>
+);
+
+
 function App() {
+  const [messages, setMessages] = useState([
+    { sender: 'bot', text: 'Merhaba! Ben Finansal Wellness Asistanı. Finansal durumunla ilgili ne hissettiğini benimle paylaşabilirsin.' }
+  ]);
   const [inputText, setInputText] = useState('');
-  const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const chatEndRef = useRef(null);
 
-  const handleAnalysis = async () => {
-    // ... (handleAnalysis fonksiyonu aynı kalıyor, değiştirmeye gerek yok)
-    if (!inputText.trim()) {
-      alert("Lütfen analiz edilecek bir metin girin.");
-      return;
-    }
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSendMessage = async () => {
+    if (!inputText.trim()) return;
+    const userMessage = { sender: 'user', text: inputText };
+    setMessages(prev => [...prev, userMessage]);
+    setInputText('');
     setLoading(true);
-    setAnalysisResult(null);
-
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/analyze', {
-        text: inputText
-      });
-      setAnalysisResult(response.data);
+      const response = await axios.post('http://127.0.0.1:8000/api/analyze', { text: userMessage.text });
+      const botResponse = {
+        sender: 'bot',
+        text: response.data.tavsiye.ana_metin,
+        actions: response.data.tavsiye.aksiyonlar,
+      };
+      setMessages(prev => [...prev, botResponse]);
     } catch (error) {
-      console.error("API'a bağlanırken bir hata oluştu:", error);
-      alert("Sunucuya bağlanırken bir hata oluştu. Backend'in çalıştığından emin misin?");
+      const errorResponse = { sender: 'bot', text: 'Üzgünüm, sunucuya bağlanırken bir sorun oluştu.' };
+      setMessages(prev => [...prev, errorResponse]);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleActionClick = (actionText) => {
+    const botResponse = { sender: 'bot', text: `'${actionText}' hakkında daha detaylı bilgi ve kişiselleştirilmiş bir eylem planı sunmak için çalışmalarımız devam ediyor.` };
+    setMessages(prev => [...prev, botResponse]);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-        textAlign="center"
-        sx={{ p: 2 }}
-      >
-        <Card sx={{ 
-          width: '100%', 
-          maxWidth: 600, 
-          borderRadius: 4, 
-          boxShadow: '0 8px 32px 0 rgba(0,0,0,0.1)',
-          borderTop: '4px solid', // --- YENİ EKLENDİ: KIRMIZI VURGU ---
-          borderColor: 'primary.main' // Kırmızı rengi temadan alıyor
-        }}>
-          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <MotivationalQuote />
 
-            <img 
-  src="/logo.png" 
-  alt="Finansal Wellness Logosu" 
-  style={{ height: '50px', marginBottom: '1.5rem' }} 
-/>
-
-
-            <Typography variant="h4" component="h1" gutterBottom fontWeight="700">
+        <Card sx={{ height: '80vh', display: 'flex', flexDirection: 'column', borderRadius: 4, boxShadow: '0 8px 32px 0 rgba(0,0,0,0.1)' }}>
+          <Box sx={{ p: 2, borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Typography variant="h6" component="h1" fontWeight="bold" color="secondary">
               Finansal Wellness Asistanı
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-              Finansal durumunuz hakkında ne hissettiğinizi bizimle paylaşın.
-            </Typography>
-            
-            <TextField
-              fullWidth
-              multiline
-              rows={4}
-              variant="outlined"
-              placeholder="Bugün parayla ilgili canımı sıkan şey..."
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              disabled={loading}
-            />
-
-            <Box sx={{ mt: 2, position: 'relative' }}>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={handleAnalysis}
-                disabled={loading}
-                sx={{ textTransform: 'none', fontSize: '1rem', padding: '10px 30px', borderRadius: 2 }}
-              >
-                {loading ? <CircularProgress size={24} color="inherit" /> : "Analiz Et"}
-              </Button>
-            </Box>
-
-            {analysisResult && (
-              <div className="result-box">
-                <Typography variant="h6" gutterBottom>Analiz Sonucu:</Typography>
-                <Typography><strong>Duygu:</strong> {analysisResult.duygu}</Typography>
-                <Typography><strong>Konu:</strong> {analysisResult.konu}</Typography>
-                <Typography sx={{ mt: 2 }}><strong>Tavsiye:</strong> {analysisResult.tavsiye}</Typography>
+          </Box>
+          
+          <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
+            {messages.map((msg, index) => (
+              <div key={index} className={`message-bubble ${msg.sender === 'user' ? 'user-bubble' : 'bot-bubble'}`}>
+                <Typography variant="body1">{msg.text}</Typography>
+                {msg.actions && (
+                  <Stack direction="row" spacing={1} sx={{ mt: 1.5, flexWrap: 'wrap', gap: 1 }}>
+                    {msg.actions.map((action, i) => (
+                      <Button key={i} size="small" variant="outlined" color="secondary" sx={{ borderRadius: '16px', bgcolor: 'white', textTransform: 'none' }} onClick={() => handleActionClick(action)}>
+                        {action}
+                      </Button>
+                    ))}
+                  </Stack>
+                )}
               </div>
-            )}
-          </CardContent>
+            ))}
+            {loading && <CircularProgress size={24} sx={{ display: 'block', margin: '10px auto' }} />}
+            <div ref={chatEndRef} />
+          </Box>
+
+          <Box sx={{ p: 2, borderTop: '1px solid #ddd', bgcolor: '#f9f9f9' }}>
+            <Stack direction="row" spacing={1}>
+              <TextField fullWidth variant="outlined" placeholder="Bir mesaj yaz..." value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && !loading && handleSendMessage()} disabled={loading} size="small" />
+              <IconButton variant="contained" onClick={handleSendMessage} disabled={loading} color="primary">
+                <SendIcon />
+              </IconButton>
+            </Stack>
+          </Box>
         </Card>
-      </Box>
+      </Container>
     </ThemeProvider>
-  )
+  );
 }
 
 export default App;
