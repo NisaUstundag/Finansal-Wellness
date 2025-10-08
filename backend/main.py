@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from transformers import pipeline
 from . import models, schemas
 from .database import SessionLocal, engine
+from fastapi.middleware.cors import CORSMiddleware
 
 # Veritabanı tablolarını oluşturur
 models.Base.metadata.create_all(bind=engine)
